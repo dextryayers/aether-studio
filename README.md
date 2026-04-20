@@ -536,7 +536,7 @@ Create `.env` file:
 GEMINI_API_KEY=your_api_key_here
 
 # Social Media Links
-VITE_LINKEDIN_URL=https://linkedin.com/in/hanifabdurrohim
+VITE_LINKEDIN_URL=https://linkedin.com/in/YOURPROFILE
 VITE_GITHUB_URL=https://github.com/dextryayers
 VITE_INSTAGRAM_URL=https://instagram.com/hanziip.kds
 VITE_PHONE_NUMBER=082332430578
