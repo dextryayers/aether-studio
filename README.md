@@ -9,7 +9,7 @@
 
 **A sophisticated, modern portfolio and services platform engineered by Hanif Abdurrohim**
 
-[🌐 Live Demo](#) • [📚 Documentation](#architecture) • [🚀 Quick Start](#quick-start)
+[🌐 Live Demo](https://haniplabs.com) • [📚 Documentation](#architecture) • [🚀 Quick Start](#quick-start)
 
 </div>
 
