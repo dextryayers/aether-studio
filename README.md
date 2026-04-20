@@ -539,7 +539,7 @@ GEMINI_API_KEY=your_api_key_here
 VITE_LINKEDIN_URL=https://linkedin.com/in/YOURPROFILE
 VITE_GITHUB_URL=https://github.com/PROFILEGIT
 VITE_INSTAGRAM_URL=https://instagram.com/USER
-VITE_PHONE_NUMBER=082332430578
+VITE_PHONE_NUMBER=NUMBER
 
 # Optional: API endpoints
 VITE_API_URL=http://localhost:3000
