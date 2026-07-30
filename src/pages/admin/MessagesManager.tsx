@@ -1,0 +1,141 @@
+import { useEffect, useState } from "react";
+import { api } from "@/src/services/api";
+import { Mail, Trash2, Check, X, ChevronDown, ChevronUp, Inbox } from "lucide-react";
+
+export default function MessagesManager() {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => { load(); }, []);
+
+  const load = async () => {
+    setLoading(true);
+    try { setMessages(await api.getMessages()); } catch {} finally { setLoading(false); }
+  };
+
+  const showMsg = (t: "success" | "error", s: string) => {
+    setMessage({ type: t, text: s });
+    setTimeout(() => setMessage(null), 2500);
+  };
+
+  const markRead = async (id: string) => {
+    try {
+      await api.markMessageRead(id);
+      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: true } : m)));
+    } catch { showMsg("error", "Failed to update"); }
+  };
+
+  const remove = async (id: string) => {
+    try {
+      await api.deleteMessage(id);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      showMsg("success", "Message deleted");
+    } catch { showMsg("error", "Failed to delete"); }
+  };
+
+  const unread = messages.filter((m) => !m.is_read).length;
+
+  const input = "w-full h-10 bg-[#050505] border border-zinc-800 px-3 text-sm text-white outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/20 transition-all";
+
+  return (
+    <div className="space-y-5 lg:space-y-8">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl lg:text-3xl font-black tracking-tighter uppercase text-white">Messages</h1>
+          <p className="text-[9px] lg:text-[10px] text-zinc-500 font-medium mt-0.5 lg:mt-1 tracking-wide">
+            {messages.length} total{unread > 0 ? `, ${unread} unread` : ""}
+          </p>
+        </div>
+      </div>
+
+      {message && (
+        <div className={`px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
+          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
+        }`}>
+          {message.text}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 bg-zinc-800/30 animate-pulse border border-zinc-800/40" />
+          ))}
+        </div>
+      ) : messages.length === 0 ? (
+        <div className="border border-zinc-800/50 p-8 lg:p-12 text-center">
+          <div className="w-10 h-10 lg:w-12 lg:h-12 mx-auto mb-3 lg:mb-4 border border-zinc-800 flex items-center justify-center">
+            <Inbox className="h-4 w-4 lg:h-5 lg:w-5 text-zinc-600" />
+          </div>
+          <p className="text-xs lg:text-sm font-bold text-zinc-500">No messages yet</p>
+          <p className="text-[9px] lg:text-[10px] text-zinc-700 mt-1">Incoming contact form submissions will appear here</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {messages.map((msg) => (
+            <div key={msg.id} className={`border ${msg.is_read ? "border-zinc-800/30" : "border-primary/20 bg-primary/[0.02]"} bg-[#0a0a0a] transition-all`}>
+              <button
+                onClick={() => setExpanded(expanded === msg.id ? null : msg.id)}
+                className="w-full flex items-center justify-between px-3 lg:px-5 py-3 lg:py-4 gap-3 text-left"
+              >
+                <div className="flex items-center gap-3 lg:gap-4 min-w-0">
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${msg.is_read ? "bg-zinc-700" : "bg-primary"}`} />
+                  <div className="min-w-0">
+                    <p className={`text-xs lg:text-sm truncate ${msg.is_read ? "text-zinc-400" : "text-white font-bold"}`}>
+                      {msg.name}
+                    </p>
+                    <p className="text-[9px] lg:text-[10px] text-zinc-600 truncate mt-0.5">
+                      {msg.subject || "No subject"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 lg:gap-3 shrink-0">
+                  <span className="text-[8px] lg:text-[9px] text-zinc-600 font-mono whitespace-nowrap">
+                    {new Date(msg.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  </span>
+                  {expanded === msg.id ? <ChevronUp className="h-3 w-3 lg:h-4 lg:w-4 text-zinc-600" /> : <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4 text-zinc-600" />}
+                </div>
+              </button>
+
+              {expanded === msg.id && (
+                <div className="px-3 lg:px-5 pb-4 lg:pb-5 border-t border-zinc-800/30 pt-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <p className="text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-500">Email</p>
+                      <p className="text-xs lg:text-sm text-white">{msg.email}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-500">Subject</p>
+                      <p className="text-xs lg:text-sm text-white">{msg.subject || "—"}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-500">Message</p>
+                    <p className="text-xs lg:text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">{msg.message}</p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2">
+                    {!msg.is_read && (
+                      <button onClick={() => markRead(msg.id)}
+                        className="h-8 px-4 border border-zinc-800 text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center gap-1.5">
+                        <Check className="h-3 w-3" /> Mark Read
+                      </button>
+                    )}
+                    <button onClick={() => remove(msg.id)}
+                      className="h-8 px-4 border border-zinc-800 text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-red-400 hover:border-red-500/40 hover:bg-red-500/5 transition-all flex items-center gap-1.5">
+                      <Trash2 className="h-3 w-3" /> Delete
+                    </button>
+                    <span className="text-[8px] lg:text-[9px] text-zinc-700 font-mono ml-auto">
+                      {new Date(msg.created_at).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
