@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 
-import authRoutes from "./routes/auth";
 import projectRoutes from "./routes/projects";
 import serviceRoutes from "./routes/services";
 import timelineRoutes from "./routes/timeline";
@@ -17,7 +16,11 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/api/auth", authRoutes);
+// test auth patterns
+app.get("/api/authx", (_req, res) => res.json({ ok: true, path: "authx" }));
+app.get("/api/auth", (_req, res) => res.json({ ok: true, path: "auth" }));
+app.get("/api/auth/test", (_req, res) => res.json({ ok: true, path: "auth/test" }));
+
 app.use("/api/projects", projectRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/timeline", timelineRoutes);
@@ -29,7 +32,7 @@ app.use("/api/*", (_req, res) => {
 });
 
 app.use((err: any, _req: any, res: any, _next: any) => {
-  console.error("Unhandled error:", err?.message || err);
+  console.error("Handler error:", err?.message || err);
   res.status(500).json({ error: err?.message || "Internal error" });
 });
 
