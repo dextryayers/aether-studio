@@ -1,13 +1,19 @@
 import express from "express";
 import cors from "cors";
+import { getSupabase } from "./_lib/supabase";
 
 const app = express();
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "30mb" }));
 
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", test: true });
+app.get("/api/health", async (_req, res) => {
+  try {
+    const sb = getSupabase();
+    res.json({ status: "ok", sb: true });
+  } catch (e: any) {
+    res.json({ status: "ok", error: e.message });
+  }
 });
 
 app.get("/api/xyz", (_req, res) => {
