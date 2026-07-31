@@ -2,7 +2,7 @@ import { PageLayout } from "@/src/components/layout/PageLayout"
 import { motion } from "motion/react"
 import { useLanguage } from "@/src/context/LanguageContext"
 import { Link } from "react-router-dom"
-import { Eye, Palette, ArrowRight, FlaskConical, Terminal } from "lucide-react"
+import { Eye, Palette, ArrowRight, FlaskConical, Terminal, Globe } from "lucide-react"
 import { SEO } from "@/src/components/layout/SEO"
 
 const getTools = (t: any) => [
@@ -35,6 +35,16 @@ const getTools = (t: any) => [
     color: "text-purple-500",
     bg: "bg-purple-500/5",
     border: "border-purple-500/20"
+  },
+  {
+    id: "subdomain-finder",
+    title: "Subdomain Finder",
+    desc: "Discover subdomains via Certificate Transparency logs",
+    path: "/lab/subdomain-finder",
+    icon: Globe,
+    color: "text-cyan-500",
+    bg: "bg-cyan-500/5",
+    border: "border-cyan-500/20"
   }
 ]
 

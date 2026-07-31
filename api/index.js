@@ -27,6 +27,95 @@ function auth(req, res, next) {
 }
 
 // Health
+const SUBDOMAIN_SOURCES = [
+  {
+    name: "crt.sh",
+    fetch: async (domain) => {
+      const r = await fetch(`https://crt.sh/?q=%25.${domain}&output=json`, {
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      const subs = new Set();
+      for (const entry of data) {
+        (entry.name_value || "")
+          .split("\n")
+          .forEach((n) => {
+            const clean = n.trim().toLowerCase().replace(/\.$/, "");
+            if (clean.endsWith(`.${domain}`) || clean === domain) subs.add(clean);
+          });
+      }
+      return [...subs];
+    },
+  },
+  {
+    name: "rapiddns.io",
+    fetch: async (domain) => {
+      const r = await fetch(`https://rapiddns.io/subdomain/${domain}?full=1`, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const html = await r.text();
+      const subs = new Set();
+      const re = /<td>([a-zA-Z0-9._*-]+)<\/td>/g;
+      let m;
+      while ((m = re.exec(html)) !== null) {
+        const clean = m[1].trim().toLowerCase().replace(/\*$/, "").replace(/\.$/, "");
+        if ((clean.endsWith(`.${domain}`) || clean === domain) && clean.includes(".")) subs.add(clean);
+      }
+      return [...subs];
+    },
+  },
+  {
+    name: "certspotter",
+    fetch: async (domain) => {
+      const r = await fetch(
+        `https://api.certspotter.com/v1/issuances?domain=${domain}&include_subdomains=true&expand=dns_names&limit=1000`,
+        { signal: AbortSignal.timeout(15000) }
+      );
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      const subs = new Set();
+      for (const cert of data) {
+        for (const name of cert.dns_names || []) {
+          const clean = name.trim().toLowerCase().replace(/^\*\./, "").replace(/\.$/, "");
+          if (clean.endsWith(`.${domain}`) || clean === domain) subs.add(clean);
+        }
+      }
+      return [...subs];
+    },
+  },
+];
+
+app.get("/api/subdomain-finder", async (req, res) => {
+  let domain = String(req.query.domain || "").trim().toLowerCase();
+  domain = domain.replace(/^https?:\/\//, "").split("/")[0].split(":")[0];
+  if (!domain || !/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) {
+    return res.status(400).json({ error: "Invalid domain" });
+  }
+  const settled = await Promise.allSettled(SUBDOMAIN_SOURCES.map((s) => s.fetch(domain)));
+  const subs = new Set();
+  const used = [];
+  const details = [];
+  SUBDOMAIN_SOURCES.forEach((s, i) => {
+    const r = settled[i];
+    if (r.status === "fulfilled" && r.value.length > 0) {
+      r.value.forEach((v) => subs.add(v));
+      used.push(s.name);
+    } else {
+      details.push(`${s.name}: ${r.status === "rejected" ? r.reason.message : "empty"}`);
+    }
+  });
+  if (subs.size === 0) {
+    return res.status(502).json({ error: "All sources failed. Try again later.", details });
+  }
+  res.json({ subdomains: [...subs].sort(), sources: used });
+});
+
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 // Auth
