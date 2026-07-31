@@ -1,14 +1,7 @@
 export default function handler(req: any, res: any) {
-  const url: string = req.url || "";
-
-  if (url === "/api/health" && req.method === "GET") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ status: "ok" }));
+  if (req.url === "/api/health" && req.method === "GET") {
+    res.status(200).json({ status: "ok" });
     return;
   }
-
-  res.statusCode = 404;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ error: "Not found" }));
+  res.status(404).json({ error: "Not found" });
 }
