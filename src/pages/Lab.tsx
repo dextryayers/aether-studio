@@ -2,7 +2,7 @@ import { PageLayout } from "@/src/components/layout/PageLayout"
 import { motion } from "motion/react"
 import { useLanguage } from "@/src/context/LanguageContext"
 import { Link } from "react-router-dom"
-import { Eye, Palette, ArrowRight, FlaskConical, Terminal, Globe, Network } from "lucide-react"
+import { Eye, Palette, ArrowRight, FlaskConical, Terminal, Globe, Network, Fingerprint } from "lucide-react"
 import { SEO } from "@/src/components/layout/SEO"
 
 const getTools = (t: any) => [
@@ -55,6 +55,16 @@ const getTools = (t: any) => [
     color: "text-emerald-500",
     bg: "bg-emerald-500/5",
     border: "border-emerald-500/20"
+  },
+  {
+    id: "crypto-tool",
+    title: "Crypto Tool",
+    desc: "Hash generator & encrypt/decrypt (AES, Caesar, XOR, Base64)",
+    path: "/lab/crypto-tool",
+    icon: Fingerprint,
+    color: "text-fuchsia-500",
+    bg: "bg-fuchsia-500/5",
+    border: "border-fuchsia-500/20"
   }
 ]
 
