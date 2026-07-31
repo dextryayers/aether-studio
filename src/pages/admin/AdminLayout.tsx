@@ -11,7 +11,7 @@ import {
   Phone,
   LogOut,
   ArrowLeft,
-  Sparkles,
+  Rocket,
   Menu,
   X,
   Inbox,
@@ -104,7 +104,7 @@ export default function AdminLayout() {
         <div className="p-4 lg:p-6 border-b border-border/30 flex items-center justify-between">
           <Link to="/admin/dashboard" className="flex items-center gap-3 group">
             <div className="w-8 h-8 bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Rocket className="w-4 h-4 text-primary" />
             </div>
             <div>
               <p className="text-sm font-black tracking-tight uppercase text-foreground">Haniplabs</p>
@@ -186,7 +186,7 @@ export default function AdminLayout() {
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
+            <Rocket className="h-4 w-4 text-primary" />
             <span className="text-xs font-black tracking-tight uppercase text-foreground">Haniplabs</span>
           </div>
           <div className="w-5" />
