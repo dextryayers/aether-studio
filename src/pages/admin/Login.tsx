@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/src/context/AdminContext";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import { toastSuccess, toastError } from "@/src/lib/alerts";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -20,10 +21,12 @@ export default function AdminLogin() {
     setLoading(true);
     try {
       await login(email, password);
+      toastSuccess("Welcome back, Admin");
       navigate("/admin/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
       setShake(true);
+      toastError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }

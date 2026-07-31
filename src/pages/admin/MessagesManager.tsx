@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "@/src/services/api";
 import { Mail, Trash2, Check, X, ChevronDown, ChevronUp, Inbox } from "lucide-react";
+import { toastSuccess, toastError, confirmDelete } from "@/src/lib/alerts";
 
 export default function MessagesManager() {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -15,29 +15,24 @@ export default function MessagesManager() {
     try { setMessages(await api.getMessages()); } catch {} finally { setLoading(false); }
   };
 
-  const showMsg = (t: "success" | "error", s: string) => {
-    setMessage({ type: t, text: s });
-    setTimeout(() => setMessage(null), 2500);
-  };
-
   const markRead = async (id: string) => {
     try {
       await api.markMessageRead(id);
       setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: true } : m)));
-    } catch { showMsg("error", "Failed to update"); }
+      toastSuccess("Marked as read");
+    } catch { toastError("Failed to update"); }
   };
 
   const remove = async (id: string) => {
+    if (!await confirmDelete("this message")) return;
     try {
       await api.deleteMessage(id);
       setMessages((prev) => prev.filter((m) => m.id !== id));
-      showMsg("success", "Message deleted");
-    } catch { showMsg("error", "Failed to delete"); }
+      toastSuccess("Message deleted");
+    } catch { toastError("Failed to delete"); }
   };
 
   const unread = messages.filter((m) => !m.is_read).length;
-
-  const input = "w-full h-10 bg-background border border-border px-3 text-sm text-foreground outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/20 transition-all";
 
   return (
     <div className="space-y-5 lg:space-y-8">
@@ -49,14 +44,6 @@ export default function MessagesManager() {
           </p>
         </div>
       </div>
-
-      {message && (
-        <div className={`px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
-          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       {loading ? (
         <div className="space-y-2">

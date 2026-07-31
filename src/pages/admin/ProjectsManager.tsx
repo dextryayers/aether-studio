@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { api } from "@/src/services/api";
 import { Pencil, Trash2, Plus, X, FolderKanban } from "lucide-react";
 import ImageUpload from "@/src/components/admin/ImageUpload";
+import { toastSuccess, toastError, confirmDelete } from "@/src/lib/alerts";
 
 export default function ProjectsManager() {
   const location = useLocation();
@@ -14,17 +15,11 @@ export default function ProjectsManager() {
 
   const [form, setForm] = useState({ title: "", category: "", description: "", image: "", year: "", order: 0, repo_url: "", demo_url: "", tech_stack: "" });
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => { load(); }, []);
 
   const load = async () => {
     try { setProjects(await api.getProjects()); } catch {}
-  };
-
-  const showMsg = (type: "success" | "error", text: string) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 2500);
   };
 
   const openNew = () => {
@@ -46,22 +41,23 @@ export default function ProjectsManager() {
     try {
       if (editing) {
         await api.updateProject(editing.id, form);
-        showMsg("success", "Project updated");
+        toastSuccess("Project updated");
       } else {
         await api.createProject(form);
-        showMsg("success", "Project created");
+        toastSuccess("Project created");
       }
       closeForm();
       await load();
-    } catch (e: any) { showMsg("error", e?.message || "Failed to save"); } finally { setSaving(false); }
+    } catch (e: any) { toastError(e?.message || "Failed to save"); } finally { setSaving(false); }
   };
 
   const remove = async (id: string) => {
+    if (!await confirmDelete("this project")) return;
     try {
       await api.deleteProject(id);
-      showMsg("success", "Project deleted");
+      toastSuccess("Project deleted");
       await load();
-    } catch (e: any) { showMsg("error", e?.message || "Failed to delete"); }
+    } catch (e: any) { toastError(e?.message || "Failed to delete"); }
   };
 
   const btn = "h-9 px-5 bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-[0.25em] hover:brightness-110 transition-all disabled:opacity-40";
@@ -80,14 +76,6 @@ export default function ProjectsManager() {
           <Plus className="h-3 w-3 lg:h-3.5 lg:w-3.5" /> <span className="hidden sm:inline">New Project</span><span className="sm:hidden">New</span>
         </button>
       </div>
-
-      {message && (
-        <div className={`fixed left-4 right-4 lg:left-auto lg:right-6 top-4 lg:top-6 z-50 px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
-          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       {showForm && (
         <div className="border border-border/60 bg-card p-4 lg:p-6 space-y-4 lg:space-y-5 relative">

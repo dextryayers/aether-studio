@@ -18,6 +18,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
+import Swal from "sweetalert2";
 
 const navItems = [
   { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -60,8 +61,22 @@ export default function AdminLayout() {
   if (!isAuthenticated) return null;
 
   const handleLogout = () => {
-    logout();
-    navigate("/admin");
+    Swal.fire({
+      title: "Logout?",
+      text: "You will be redirected to the login page",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Logout",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#dc2626",
+      background: "#000",
+      color: "#fff",
+    }).then((r) => {
+      if (r.isConfirmed) {
+        logout();
+        navigate("/admin");
+      }
+    });
   };
 
   return (

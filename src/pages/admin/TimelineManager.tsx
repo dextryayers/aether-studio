@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api } from "@/src/services/api";
 import { Pencil, Trash2, Plus, X, Clock } from "lucide-react";
+import { toastSuccess, toastError, confirmDelete } from "@/src/lib/alerts";
 
 export default function TimelineManager() {
   const location = useLocation();
@@ -12,12 +13,10 @@ export default function TimelineManager() {
   useEffect(() => { if (location.hash === "#new") setShowForm(true); }, [location.hash]);
   const [form, setForm] = useState({ year: "", title_en: "", title_id: "", event_en: "", event_id: "", order: 0 });
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => { load(); }, []);
 
   const load = async () => { try { setEvents(await api.getTimeline()); } catch {} };
-  const showMsg = (t: "success" | "error", s: string) => { setMessage({ type: t, text: s }); setTimeout(() => setMessage(null), 2500); };
 
   const openNew = () => { setEditing(null); setForm({ year: "", title_en: "", title_id: "", event_en: "", event_id: "", order: 0 }); setShowForm(true); };
   const openEdit = (e: any) => { setEditing(e); setForm({ year: e.year, title_en: e.title_en, title_id: e.title_id, event_en: e.event_en, event_id: e.event_id, order: e.order }); setShowForm(true); };
@@ -26,14 +25,15 @@ export default function TimelineManager() {
   const save = async () => {
     setSaving(true);
     try {
-      if (editing) { await api.updateTimeline(editing.id, form); showMsg("success", "Event updated"); }
-      else { await api.createTimeline(form); showMsg("success", "Event created"); }
+      if (editing) { await api.updateTimeline(editing.id, form); toastSuccess("Event updated"); }
+      else { await api.createTimeline(form); toastSuccess("Event created"); }
       closeForm(); await load();
-    } catch { showMsg("error", "Failed to save"); } finally { setSaving(false); }
+    } catch { toastError("Failed to save"); } finally { setSaving(false); }
   };
 
   const remove = async (id: string) => {
-    try { await api.deleteTimeline(id); showMsg("success", "Event deleted"); await load(); } catch { showMsg("error", "Failed to delete"); }
+    if (!await confirmDelete("this event")) return;
+    try { await api.deleteTimeline(id); toastSuccess("Event deleted"); await load(); } catch { toastError("Failed to delete"); }
   };
 
   const btn = "h-9 px-5 bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-[0.25em] hover:brightness-110 transition-all disabled:opacity-40";
@@ -50,14 +50,6 @@ export default function TimelineManager() {
           <Plus className="h-3 w-3 lg:h-3.5 lg:w-3.5" /> <span className="hidden sm:inline">New Event</span><span className="sm:hidden">New</span>
         </button>
       </div>
-
-      {message && (
-        <div className={`fixed left-4 right-4 lg:left-auto lg:right-6 top-4 lg:top-6 z-50 px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
-          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       {showForm && (
         <div className="border border-border/60 bg-card p-4 lg:p-6 space-y-4 lg:space-y-5 relative">

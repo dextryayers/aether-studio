@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api } from "@/src/services/api";
 import { Pencil, Trash2, Plus, X, Wrench } from "lucide-react";
+import { toastSuccess, toastError, confirmDelete } from "@/src/lib/alerts";
 
 export default function ServicesManager() {
   const location = useLocation();
@@ -12,12 +13,10 @@ export default function ServicesManager() {
   useEffect(() => { if (location.hash === "#new") setShowForm(true); }, [location.hash]);
   const [form, setForm] = useState({ title: "", description: "", icon: "", tags: "", order: 0 });
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => { load(); }, []);
 
   const load = async () => { try { setServices(await api.getServices()); } catch {} };
-  const showMsg = (t: "success" | "error", s: string) => { setMessage({ type: t, text: s }); setTimeout(() => setMessage(null), 2500); };
 
   const openNew = () => { setEditing(null); setForm({ title: "", description: "", icon: "", tags: "", order: 0 }); setShowForm(true); };
   const openEdit = (s: any) => { setEditing(s); setForm({ title: s.title, description: s.description, icon: s.icon, tags: s.tags?.join(", ") || "", order: s.order }); setShowForm(true); };
@@ -27,14 +26,15 @@ export default function ServicesManager() {
     setSaving(true);
     try {
       const payload = { ...form, tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean) };
-      if (editing) { await api.updateService(editing.id, payload); showMsg("success", "Service updated"); }
-      else { await api.createService(payload); showMsg("success", "Service created"); }
+      if (editing) { await api.updateService(editing.id, payload); toastSuccess("Service updated"); }
+      else { await api.createService(payload); toastSuccess("Service created"); }
       closeForm(); await load();
-    } catch { showMsg("error", "Failed to save"); } finally { setSaving(false); }
+    } catch { toastError("Failed to save"); } finally { setSaving(false); }
   };
 
   const remove = async (id: string) => {
-    try { await api.deleteService(id); showMsg("success", "Service deleted"); await load(); } catch { showMsg("error", "Failed to delete"); }
+    if (!await confirmDelete("this service")) return;
+    try { await api.deleteService(id); toastSuccess("Service deleted"); await load(); } catch { toastError("Failed to delete"); }
   };
 
   const btn = "h-9 px-5 bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-[0.25em] hover:brightness-110 transition-all disabled:opacity-40";
@@ -51,14 +51,6 @@ export default function ServicesManager() {
           <Plus className="h-3 w-3 lg:h-3.5 lg:w-3.5" /> <span className="hidden sm:inline">New Service</span><span className="sm:hidden">New</span>
         </button>
       </div>
-
-      {message && (
-        <div className={`fixed left-4 right-4 lg:left-auto lg:right-6 top-4 lg:top-6 z-50 px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
-          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       {showForm && (
         <div className="border border-border/60 bg-card p-4 lg:p-6 space-y-4 lg:space-y-5 relative">

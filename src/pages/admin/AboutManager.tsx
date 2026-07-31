@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { api } from "@/src/services/api";
 import { Save, User } from "lucide-react";
+import { toastSuccess, toastError } from "@/src/lib/alerts";
 
 export default function AboutManager() {
   const [form, setForm] = useState({ content_en: "", content_id: "" });
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -17,15 +17,15 @@ export default function AboutManager() {
 
   const save = async () => {
     setSaving(true);
-    try { await api.updateAbout(form); setMessage({ type: "success", text: "About content saved" }); setTimeout(() => setMessage(null), 2000); }
-    catch { setMessage({ type: "error", text: "Failed to save" }); } finally { setSaving(false); }
+    try { await api.updateAbout(form); toastSuccess("About content saved"); }
+    catch { toastError("Failed to save"); } finally { setSaving(false); }
   };
 
   if (!loaded) {
     return (
       <div className="space-y-5 lg:space-y-8">
         <div className="h-6 lg:h-8 w-36 lg:w-48 bg-muted animate-pulse" />
-        <div className="border border-border/50 p-4 lg:p-6 space-y-4 lg:space-y-5">
+        <div className="border border-border/50 bg-card p-4 lg:p-6 space-y-4 lg:space-y-5">
           <div className="h-24 lg:h-32 bg-muted animate-pulse" />
           <div className="h-24 lg:h-32 bg-muted animate-pulse" />
         </div>
@@ -39,14 +39,6 @@ export default function AboutManager() {
         <h1 className="text-xl lg:text-3xl font-black tracking-tighter uppercase text-foreground">About Content</h1>
         <p className="text-[9px] lg:text-[10px] text-muted-foreground font-medium mt-0.5 lg:mt-1 tracking-wide">Manage your biography in both languages</p>
       </div>
-
-      {message && (
-        <div className={`px-4 lg:px-5 py-3 border text-[10px] font-bold uppercase tracking-wider ${
-          message.type === "success" ? "bg-primary/10 border-primary/30 text-primary" : "bg-red-500/10 border-red-500/30 text-red-400"
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       <div className="border border-border/60 bg-card p-4 lg:p-6 space-y-4 lg:space-y-6">
         <div className="space-y-1.5 lg:space-y-2">
@@ -72,7 +64,7 @@ export default function AboutManager() {
         <button onClick={save} disabled={saving}
           className="h-9 lg:h-10 px-5 lg:px-6 bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-[0.25em] hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2">
           <Save className="h-3 lg:h-3.5 w-3 lg:w-3.5" />
-          {saving ? "Saving..." : message?.type === "success" ? "Saved!" : "Save Changes"}
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </div>
