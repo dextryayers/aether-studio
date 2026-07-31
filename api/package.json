@@ -1,4 +1,5 @@
 {
   "name": "aether-api",
-  "private": true
+  "private": true,
+  "type": "module"
 }
