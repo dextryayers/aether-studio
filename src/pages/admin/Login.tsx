@@ -30,11 +30,11 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#050505] dark flex items-center justify-center overflow-hidden">
+    <div className="admin relative min-h-screen bg-[#050505] flex items-center justify-center overflow-hidden">
       {/* Ambient gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-1/2 -right-1/2 w-3/4 h-3/4 bg-gradient-to-tl from-primary/3 via-transparent to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-white/[0.06] via-transparent to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-3/4 h-3/4 bg-gradient-to-tl from-white/[0.04] via-transparent to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
       </div>
 
       {/* Grid pattern overlay */}
@@ -49,8 +49,8 @@ export default function AdminLogin() {
       <div className="relative w-full max-w-md px-6">
         {/* Logo / Brand */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 mb-6 border border-primary/20 bg-primary/5">
-            <LogIn className="w-6 h-6 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-6 border border-white/20 bg-white/5">
+            <LogIn className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-4xl font-black tracking-[0.15em] uppercase text-white">
             Haniplabs
@@ -58,12 +58,12 @@ export default function AdminLogin() {
           <p className="mt-2 text-[10px] font-semibold tracking-[0.4em] uppercase text-zinc-500">
             Content Studio
           </p>
-          <div className="mx-auto mt-6 w-12 h-[1px] bg-primary/40" />
+          <div className="mx-auto mt-6 w-12 h-[1px] bg-white/40" />
         </div>
 
         {/* Card */}
         <div className="relative">
-          <div className="absolute inset-0 -z-10 rounded-sm bg-gradient-to-b from-primary/10 to-transparent opacity-50 blur-sm" />
+          <div className="absolute inset-0 -z-10 rounded-sm bg-gradient-to-b from-white/10 to-transparent opacity-50 blur-sm" />
           <div className="relative bg-[#0a0a0a] border border-zinc-800/80 rounded-sm p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email */}
@@ -78,13 +78,13 @@ export default function AdminLogin() {
                     onChange={(e) => setEmail(e.target.value)}
                     className={`w-full h-12 bg-[#050505] border px-4 text-sm text-white outline-none transition-all duration-200
                       placeholder:text-zinc-700
-                      ${error ? "border-red-500/50" : "border-zinc-800 group-focus-within:border-primary/50"}
-                      focus:border-primary/60 focus:ring-1 focus:ring-primary/20`}
+                      ${error ? "border-red-500/50" : "border-zinc-800 group-focus-within:border-white/50"}
+                      focus:border-white/60 focus:ring-1 focus:ring-white/20`}
                     placeholder="you@example.com"
                     autoFocus
                     required
                   />
-                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                 </div>
               </div>
 
@@ -100,8 +100,8 @@ export default function AdminLogin() {
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full h-12 bg-[#050505] border px-4 pr-12 text-sm text-white outline-none transition-all duration-200
                       placeholder:text-zinc-700
-                      ${error ? "border-red-500/50" : "border-zinc-800 group-focus-within:border-primary/50"}
-                      focus:border-primary/60 focus:ring-1 focus:ring-primary/20`}
+                      ${error ? "border-red-500/50" : "border-zinc-800 group-focus-within:border-white/50"}
+                      focus:border-white/60 focus:ring-1 focus:ring-white/20`}
                     placeholder="••••••••"
                     required
                   />
@@ -113,7 +113,7 @@ export default function AdminLogin() {
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
-                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                 </div>
               </div>
 
@@ -132,9 +132,9 @@ export default function AdminLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="relative w-full h-12 overflow-hidden bg-primary text-black font-black text-[10px] uppercase tracking-[0.3em] transition-all duration-300 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed group"
+                className="relative w-full h-12 overflow-hidden bg-white text-black font-black text-[10px] uppercase tracking-[0.3em] transition-all duration-300 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed group"
               >
-                <span className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="absolute inset-0 bg-black/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 <span className="relative flex items-center justify-center gap-2">
                   {loading ? (
                     <span className="flex gap-1">

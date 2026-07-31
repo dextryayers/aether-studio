@@ -48,7 +48,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] dark flex">
+    <div className="admin min-h-screen bg-[#050505] flex">
       {/* Ambient bg */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[120px]" />
