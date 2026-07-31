@@ -8,6 +8,12 @@ export default function AdminDashboard() {
   const { admin } = useAdmin();
   const [stats, setStats] = useState<any>({});
   const [loaded, setLoaded] = useState(false);
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -37,14 +43,24 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 lg:space-y-10">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl lg:text-4xl font-black tracking-tighter uppercase text-white">
-          Dashboard
-        </h1>
-        <p className="text-[10px] lg:text-xs text-zinc-500 font-medium mt-1 lg:mt-2 tracking-wide">
-          Welcome back,{" "}
-          <span className="text-primary font-bold">{admin?.username}</span>
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-4xl font-black tracking-tighter uppercase text-white">
+            Dashboard
+          </h1>
+          <p className="text-[10px] lg:text-xs text-zinc-500 font-medium mt-1 lg:mt-2 tracking-wide">
+            Welcome back,{" "}
+            <span className="text-white font-bold">Admin</span>
+          </p>
+        </div>
+        <div className="shrink-0 text-right">
+          <p className="text-lg lg:text-2xl font-black tracking-tighter text-white tabular-nums">
+            {time.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}
+          </p>
+          <p className="text-[8px] lg:text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-600 mt-0.5">
+            {time.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </p>
+        </div>
       </div>
 
       {/* Stat cards */}
