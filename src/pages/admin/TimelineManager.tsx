@@ -112,7 +112,7 @@ export default function TimelineManager() {
                   {e.title_id && <p className="text-[8px] lg:text-[10px] text-muted-foreground truncate">ID: {e.title_id}</p>}
                 </div>
               </div>
-              <div className="flex items-center gap-1 lg:gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity shrink-0">
+              <div className="flex items-center gap-1 lg:gap-2 transition-opacity shrink-0">
                 <button onClick={() => openEdit(e)} className="p-1.5 lg:p-2 text-muted-foreground hover:text-primary hover:bg-primary/10"><Pencil className="h-3 w-3 lg:h-3.5 lg:w-3.5" /></button>
                 <button onClick={() => remove(e.id)} className="p-1.5 lg:p-2 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"><Trash2 className="h-3 w-3 lg:h-3.5 lg:w-3.5" /></button>
               </div>
