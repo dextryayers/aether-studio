@@ -5,7 +5,7 @@ import { generateToken } from "../_lib/auth";
 
 const router = Router();
 
-router.get("/test", (_req, res) => {
+router.get("/ping", (_req, res) => {
   res.json({ ok: true });
 });
 
