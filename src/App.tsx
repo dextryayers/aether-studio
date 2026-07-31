@@ -25,6 +25,7 @@ import CssPalette from "./pages/lab/CssPalette";
 import CssPlaying from "./pages/lab/CssPlaying";
 import CssPlayingGame from "./pages/lab/CssPlayingGame";
 import SubdomainFinder from "./pages/lab/SubdomainFinder";
+import DnsFinder from "./pages/lab/DnsFinder";
 
 // Admin
 import AdminLogin from "./pages/admin/Login";
@@ -63,6 +64,7 @@ export default function App() {
               <Route path="/lab/css-playing" element={<CssPlaying />} />
               <Route path="/lab/css-playing/:level/play" element={<CssPlayingGame />} />
               <Route path="/lab/subdomain-finder" element={<SubdomainFinder />} />
+              <Route path="/lab/dns-finder" element={<DnsFinder />} />
 
               {/* Admin Panel */}
               <Route path="/admin" element={<AdminLogin />} />

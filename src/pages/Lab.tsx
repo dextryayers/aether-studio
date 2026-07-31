@@ -2,7 +2,7 @@ import { PageLayout } from "@/src/components/layout/PageLayout"
 import { motion } from "motion/react"
 import { useLanguage } from "@/src/context/LanguageContext"
 import { Link } from "react-router-dom"
-import { Eye, Palette, ArrowRight, FlaskConical, Terminal, Globe } from "lucide-react"
+import { Eye, Palette, ArrowRight, FlaskConical, Terminal, Globe, Network } from "lucide-react"
 import { SEO } from "@/src/components/layout/SEO"
 
 const getTools = (t: any) => [
@@ -45,6 +45,16 @@ const getTools = (t: any) => [
     color: "text-cyan-500",
     bg: "bg-cyan-500/5",
     border: "border-cyan-500/20"
+  },
+  {
+    id: "dns-finder",
+    title: "DNS Finder",
+    desc: "Lookup all DNS record types via DNS-over-HTTPS",
+    path: "/lab/dns-finder",
+    icon: Network,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/5",
+    border: "border-emerald-500/20"
   }
 ]
 
